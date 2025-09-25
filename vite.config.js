@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vuetify from 'vite-plugin-vuetify'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { resolve } from 'path'
@@ -7,6 +8,9 @@ import { resolve } from 'path'
 export default defineConfig({
     plugins: [
         vue(),
+        vuetify({
+            autoImport: true,
+        }),
         AutoImport({
             imports: [
                 'vue',
@@ -25,13 +29,13 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': resolve(__dirname, 'src'),
-            '@components': resolve(__dirname, 'src/components'),
-            '@views': resolve(__dirname, 'src/views'),
-            '@stores': resolve(__dirname, 'src/stores'),
-            '@services': resolve(__dirname, 'src/services'),
-            '@utils': resolve(__dirname, 'src/utils'),
-            '@assets': resolve(__dirname, 'src/assets')
+            '@': resolve(__dirname, 'resources/js'),
+            '@components': resolve(__dirname, 'resources/js/components'),
+            '@views': resolve(__dirname, 'resources/js/views'),
+            '@stores': resolve(__dirname, 'resources/js/stores'),
+            '@api': resolve(__dirname, 'resources/js/api'),
+            '@utils': resolve(__dirname, 'resources/js/utils'),
+            '@assets': resolve(__dirname, 'resources/assets')
         }
     },
     server: {
@@ -39,28 +43,30 @@ export default defineConfig({
         port: 3000,
         hmr: {
             host: 'localhost'
+        },
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8001',
+                changeOrigin: true,
+                secure: false,
+            }
         }
     },
     build: {
-        outDir: 'dist',
+        outDir: 'public/dist',
         assetsDir: 'assets',
         sourcemap: false,
         rollupOptions: {
+            input: {
+                app: './resources/js/main.js'
+            },
             output: {
                 manualChunks: {
                     vendor: ['vue', 'vue-router', 'pinia'],
                     charts: ['chart.js', 'vue-chartjs'],
-                    ui: ['@headlessui/vue', '@heroicons/vue']
+                    ui: ['vuetify']
                 }
             }
-        }
-    },
-    css: {
-        postcss: {
-            plugins: [
-                require('tailwindcss'),
-                require('autoprefixer')
-            ]
         }
     }
 })
