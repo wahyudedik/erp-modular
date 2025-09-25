@@ -16,7 +16,7 @@ Kami sangat menghargai laporan security vulnerability yang bertanggung jawab. Ji
 ### 📧 Cara Melaporkan
 
 1. **JANGAN** buat issue publik di GitHub
-2. **Kirim email** ke [security@wahyudedik.dev](mailto:security@wahyudedik.dev)
+2. **Kirim email** ke [wdedyk@gmail.com](mailto:wdedyk@gmail.com)
 3. **Sertakan** informasi berikut:
    - Deskripsi vulnerability
    - Langkah-langkah untuk reproduce
@@ -174,7 +174,7 @@ Kami mengakui dan menghargai security researchers yang membantu meningkatkan kea
 
 Untuk pertanyaan security atau laporan vulnerability:
 
-- **Email**: [security@wahyudedik.dev](mailto:security@wahyudedik.dev)
+- **Email**: [wdedyk@gmail.com](mailto:wdedyk@gmail.com)
 - **PGP Key**: [Available on request]
 - **Response Time**: 24-72 hours
 
