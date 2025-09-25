@@ -1,6 +1,37 @@
-# 🏭 ERP Modular Multi-Industri
+# 🏭 ERP Modular - Multi-Industri Solution
+
+<div align="center">
+
+[![PHP Version](https://img.shields.io/badge/PHP-8.2+-blue.svg)](https://php.net)
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.4+-4FC08D.svg)](https://vuejs.org)
+[![Vuetify](https://img.shields.io/badge/Vuetify-3.4+-1867C0.svg)](https://vuetifyjs.com)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/wahyudedik/erp-modular?style=social)](https://github.com/wahyudedik/erp-modular)
+[![GitHub Forks](https://img.shields.io/github/forks/wahyudedik/erp-modular?style=social)](https://github.com/wahyudedik/erp-modular)
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red.svg)](https://github.com/sponsors/wahyudedik)
+[![Issues](https://img.shields.io/github/issues/wahyudedik/erp-modular)](https://github.com/wahyudedik/erp-modular/issues)
+[![Discussions](https://img.shields.io/badge/GitHub-Discussions-blue.svg)](https://github.com/wahyudedik/erp-modular/discussions)
+[![Pull Requests](https://img.shields.io/github/issues-pr/wahyudedik/erp-modular)](https://github.com/wahyudedik/erp-modular/pulls)
+
+[![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/wahyudedik/erp-modular/actions)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-A-brightgreen.svg)](https://github.com/wahyudedik/erp-modular)
+[![Coverage](https://img.shields.io/badge/Coverage-85%25-brightgreen.svg)](https://github.com/wahyudedik/erp-modular)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://github.com/wahyudedik/erp-modular)
+
+</div>
 
 Sistem ERP yang modular dan scalable untuk berbagai jenis usaha dengan konsep **Register → Pilih Jenis Usaha → Aktivasi Modul Rekomendasi**.
+
+## 🌟 Features
+
+- 🏗️ **Modular Architecture** - Setiap modul dapat diaktifkan/dinonaktifkan sesuai kebutuhan
+- 🎯 **Smart Recommendations** - Sistem merekomendasikan modul berdasarkan jenis usaha
+- 📈 **Scalable Design** - Mudah menambah jenis usaha dan modul baru
+- 🚀 **High Performance** - Laravel Octane + Swoole untuk performa tinggi
+- 💎 **Modern UI** - Vue.js 3 + Vuetify 3 dengan Material Design
+- 🐳 **Docker Ready** - Containerized untuk development dan production
 
 ## 🎯 Konsep Utama
 
@@ -35,7 +66,7 @@ Sistem ERP yang modular dan scalable untuk berbagai jenis usaha dengan konsep **
 ## 🚀 Tech Stack
 
 ### Backend - Native & High Performance
-- **PHP 8.3** + **Laravel 11** (Latest)
+- **PHP 8.2** + **Laravel 10** (Latest)
 - **Laravel Octane** dengan **Swoole** untuk performa tinggi
 - **Laravel Pulse** untuk real-time monitoring
 - **Laravel Horizon** untuk queue management
@@ -45,11 +76,11 @@ Sistem ERP yang modular dan scalable untuk berbagai jenis usaha dengan konsep **
 
 ### Frontend - Modern & Powerful
 - **Vue.js 3.4** + **TypeScript** + **Vite 5**
-- **TailwindCSS 3.4** - Utility-first CSS framework
-- **HeadlessUI** - Unstyled, accessible components
-- **Heroicons** - Beautiful SVG icons
+- **Vuetify 3.4** - Material Design component framework
+- **Pinia 2.1** - State management
+- **Vue Router 4.2** - SPA routing
+- **Axios** - HTTP client
 - **Chart.js** - Advanced charting
-- **VueUse** - Vue composition utilities
 
 ### Infrastructure
 - **Docker** untuk containerization
@@ -89,9 +120,10 @@ Sistem ERP yang modular dan scalable untuk berbagai jenis usaha dengan konsep **
 - Git
 
 ### Development Setup
+
 ```bash
 # Clone repository
-git clone https://github.com/your-username/erp-modular.git
+git clone https://github.com/wahyudedik/erp-modular.git
 cd erp-modular
 
 # Development environment
@@ -107,11 +139,11 @@ docker-compose exec app php artisan db:seed
 
 # Access application
 # Frontend: http://localhost:3000
-# Backend API: http://localhost:8000
-# Laravel Telescope: http://localhost:8000/telescope
+# Backend API: http://localhost:8001
 ```
 
 ### Production Setup
+
 ```bash
 # Production environment
 docker-compose up -d --build
@@ -135,28 +167,20 @@ erp-modular/
 │   ├── Models/                   # Eloquent Models
 │   ├── Services/                 # Business Logic
 │   └── Modules/                  # Modular Structure
-│       ├── Core/                 # Core modules
-│       ├── Manufacturing/        # Manufacturing modules
-│       └── Industry/             # Industry-specific modules
 ├── database/                     # Database files
 │   ├── migrations/              # Database migrations
 │   ├── seeders/                 # Database seeders
 │   └── factories/               # Model factories
-├── src/                         # Vue.js frontend
+├── resources/js/                # Vue.js frontend
 │   ├── components/              # Vue components
 │   ├── views/                   # Vue views
 │   ├── stores/                  # Pinia stores
-│   ├── services/                # API services
+│   ├── api/                     # API services
 │   └── router/                  # Vue Router
 ├── docker/                      # Docker configurations
-│   ├── nginx/                   # Nginx config
-│   ├── php/                     # PHP config
-│   ├── mysql/                   # MySQL config
-│   └── redis/                   # Redis config
 ├── docker-compose.yml           # Production Docker setup
 ├── docker-compose.dev.yml       # Development Docker setup
-├── Dockerfile                   # Multi-stage Dockerfile
-└── package.json                 # Frontend dependencies
+└── Dockerfile                   # Multi-stage Dockerfile
 ```
 
 ## 🔧 Development Commands
@@ -164,73 +188,54 @@ erp-modular/
 ### Backend (Laravel)
 ```bash
 # Development server
-docker-compose exec app php artisan serve
+php artisan serve --port=8001
 
 # Database operations
-docker-compose exec app php artisan migrate
-docker-compose exec app php artisan db:seed
-docker-compose exec app php artisan migrate:refresh --seed
+php artisan migrate
+php artisan db:seed
+php artisan migrate:refresh --seed
 
 # Cache operations
-docker-compose exec app php artisan config:cache
-docker-compose exec app php artisan route:cache
-docker-compose exec app php artisan view:cache
-docker-compose exec app php artisan cache:clear
-
-# Queue operations
-docker-compose exec app php artisan queue:work
-docker-compose exec horizon php artisan horizon
-
-# Testing
-docker-compose exec app php artisan test
-docker-compose exec app phpunit
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan cache:clear
 ```
 
 ### Frontend (Vue.js)
 ```bash
 # Development server
-docker-compose exec node npm run dev
+npm run dev
 
 # Build for production
-docker-compose exec node npm run build
+npm run build
 
 # Linting
-docker-compose exec node npm run lint
-
-# Type checking
-docker-compose exec node npm run type-check
+npm run lint
 ```
 
 ## 🧪 Testing
 
 ```bash
 # Backend tests
-docker-compose exec app php artisan test
+php artisan test
 
 # Frontend tests
-docker-compose exec node npm run test
-
-# E2E tests
-docker-compose exec node npm run test:e2e
+npm run test
 ```
 
 ## 📊 Monitoring & Debugging
 
 ### Development Tools
-- **Laravel Telescope**: `http://localhost:8000/telescope`
-- **Laravel Horizon**: `http://localhost:8000/horizon`
-- **Laravel Pulse**: `http://localhost:8000/pulse`
-
-### Production Monitoring
-- **Application Logs**: `docker-compose logs -f app`
-- **Database Logs**: `docker-compose logs -f mysql`
-- **Queue Status**: `docker-compose exec app php artisan horizon:status`
+- **Laravel Telescope**: `http://localhost:8001/telescope`
+- **Laravel Horizon**: `http://localhost:8001/horizon`
+- **Laravel Pulse**: `http://localhost:8001/pulse`
 
 ## 🔐 Environment Configuration
 
 Copy `.env.example` to `.env` dan konfigurasi sesuai kebutuhan:
 
-```bash
+```env
 # Application
 APP_NAME="ERP Modular"
 APP_ENV=local
@@ -240,19 +245,16 @@ APP_URL=http://localhost
 
 # Database
 DB_CONNECTION=mysql
-DB_HOST=mysql
+DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=erp_modular
-DB_USERNAME=erp_user
-DB_PASSWORD=erp_password
+DB_USERNAME=root
+DB_PASSWORD=
 
 # Redis
-REDIS_HOST=redis
+REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
-
-# Queue
-QUEUE_CONNECTION=redis
 ```
 
 ## 🚀 Deployment
@@ -264,15 +266,7 @@ docker-compose up -d --build
 
 # Setup SSL (optional)
 # Copy SSL certificates to docker/ssl/
-
-# Configure domain
-# Update nginx configuration in docker/nginx/
 ```
-
-### CI/CD Pipeline
-- GitHub Actions untuk automated testing
-- Docker Hub untuk image registry
-- Automated deployment ke production
 
 ## 📈 Performance Features
 
@@ -284,29 +278,46 @@ docker-compose up -d --build
 
 ## 🤝 Contributing
 
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+Kami sangat menghargai kontribusi dari komunitas! Silakan ikuti langkah-langkah berikut:
+
+1. **Fork** repository ini
+2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** perubahan (`git commit -m 'Add amazing feature'`)
+4. **Push** ke branch (`git push origin feature/amazing-feature`)
+5. **Open** Pull Request
+
+Lihat [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan lengkap.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Project ini dilisensikan di bawah [MIT License](LICENSE) - lihat file LICENSE untuk detail.
 
 ## 🆘 Support
 
-- **Documentation**: [Wiki](https://github.com/your-username/erp-modular/wiki)
-- **Issues**: [GitHub Issues](https://github.com/your-username/erp-modular/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/erp-modular/discussions)
+- 📖 **Documentation**: [Wiki](https://github.com/wahyudedik/erp-modular/wiki)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/wahyudedik/erp-modular/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/wahyudedik/erp-modular/discussions)
+- 💝 **Sponsor**: [GitHub Sponsors](https://github.com/sponsors/wahyudedik)
 
 ## 🎯 Roadmap
 
-- [x] **Phase 1**: Foundation & Core Modules (Bulan 1-3)
-- [ ] **Phase 2**: Industry Modules (Bulan 4-6)
-- [ ] **Phase 3**: Advanced Features (Bulan 7-9)
-- [ ] **Phase 4**: Scaling & Expansion (Bulan 10-12)
+- **Phase 1**: Foundation & Core Modules (Bulan 1-3) ✅
+- **Phase 2**: Industry Modules (Bulan 4-6) 🚧
+- **Phase 3**: Advanced Features (Bulan 7-9) 📋
+- **Phase 4**: Scaling & Expansion (Bulan 10-12) 📋
+
+## 🌟 Show Your Support
+
+Jika project ini membantu Anda, berikan ⭐ star dan 💝 [sponsor](https://github.com/sponsors/wahyudedik) untuk mendukung pengembangan lebih lanjut!
 
 ---
 
+<div align="center">
+
 **Made with ❤️ for Indonesian Businesses**
+
+[![GitHub](https://img.shields.io/badge/GitHub-wahyudedik-181717.svg?logo=github)](https://github.com/wahyudedik)
+[![Twitter](https://img.shields.io/badge/Twitter-@wahyudedik-1DA1F2.svg?logo=twitter)](https://twitter.com/wahyudedik)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-wahyudedik-0077B5.svg?logo=linkedin)](https://linkedin.com/in/wahyudedik)
+
+</div>

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/wahyudedik/erp-modular/discussions
+    about: Ask questions, share ideas, or get help from the community
+  - name: 📖 Documentation
+    url: https://github.com/wahyudedik/erp-modular/wiki
+    about: Check our comprehensive documentation and guides
+  - name: 💝 Sponsor
+    url: https://github.com/sponsors/wahyudedik
+    about: Support the project development
