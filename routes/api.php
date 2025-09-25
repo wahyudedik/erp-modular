@@ -18,6 +18,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/modules/{module}', [ModuleController::class, 'show']);
     Route::get('/modules/category/{category}', [ModuleController::class, 'getByCategory']);
     Route::get('/modules/categories/list', [ModuleController::class, 'getCategories']);
+    Route::get('/modules/business-type/{businessType}', [ModuleController::class, 'getForBusinessType']);
+    Route::get('/modules/statistics', [ModuleController::class, 'getStatistics']);
 });
 
 // Protected API routes
@@ -26,10 +28,11 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     
-    // User Modules
-    Route::get('/user-modules', [UserModuleController::class, 'index']);
-    Route::get('/user-modules/active', [UserModuleController::class, 'getActive']);
-    Route::post('/user-modules/activate', [UserModuleController::class, 'activate']);
-    Route::delete('/user-modules/{module}/deactivate', [UserModuleController::class, 'deactivate']);
-    Route::put('/user-modules/{module}/configuration', [UserModuleController::class, 'updateConfiguration']);
+        // User Modules
+        Route::get('/user-modules', [UserModuleController::class, 'index']);
+        Route::get('/user-modules/active', [UserModuleController::class, 'getActive']);
+        Route::post('/user-modules/activate', [UserModuleController::class, 'activate']);
+        Route::post('/user-modules/bulk-activate', [UserModuleController::class, 'bulkActivate']);
+        Route::delete('/user-modules/{module}/deactivate', [UserModuleController::class, 'deactivate']);
+        Route::put('/user-modules/{module}/configuration', [UserModuleController::class, 'updateConfiguration']);
 });

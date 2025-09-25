@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\ModuleService;
 use App\Models\Module;
 use App\Models\UserModule;
 use Illuminate\Http\Request;
@@ -10,20 +11,32 @@ use Illuminate\Support\Facades\Auth;
 
 class UserModuleController extends Controller
 {
+    protected $moduleService;
+
+    public function __construct(ModuleService $moduleService)
+    {
+        $this->moduleService = $moduleService;
+    }
     /**
      * Display a listing of the user's modules.
      */
     public function index()
     {
-        $userModules = Auth::user()->userModules()
-            ->with('module')
-            ->get();
+        try {
+            $userModules = $this->moduleService->getUserModules(Auth::id());
 
-        return response()->json([
-            'success' => true,
-            'data' => $userModules,
-            'message' => 'User modules retrieved successfully'
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $userModules,
+                'message' => 'User modules retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve user modules',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -31,15 +44,21 @@ class UserModuleController extends Controller
      */
     public function getActive()
     {
-        $activeModules = Auth::user()->activeModules()
-            ->with('module')
-            ->get();
+        try {
+            $activeModules = $this->moduleService->getUserActiveModules(Auth::id());
 
-        return response()->json([
-            'success' => true,
-            'data' => $activeModules,
-            'message' => 'Active modules retrieved successfully'
-        ]);
+            return response()->json([
+                'success' => true,
+                'data' => $activeModules,
+                'message' => 'Active modules retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve active modules',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -48,44 +67,30 @@ class UserModuleController extends Controller
     public function activate(Request $request)
     {
         $request->validate([
-            'module_id' => 'required|exists:modules,id'
+            'module_id' => 'required|exists:modules,id',
+            'configuration' => 'sometimes|array'
         ]);
 
-        $module = Module::findOrFail($request->module_id);
+        try {
+            $configuration = $request->input('configuration', []);
+            $userModule = $this->moduleService->activateModule(
+                Auth::id(),
+                $request->module_id,
+                $configuration
+            );
 
-        // Check if module is already activated
-        $existingModule = Auth::user()->userModules()
-            ->where('module_id', $request->module_id)
-            ->first();
-
-        if ($existingModule) {
-            if ($existingModule->is_active) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Module is already activated'
-                ], 400);
-            } else {
-                $existingModule->activate();
-                return response()->json([
-                    'success' => true,
-                    'data' => $existingModule->load('module'),
-                    'message' => 'Module activated successfully'
-                ]);
-            }
+            return response()->json([
+                'success' => true,
+                'data' => $userModule,
+                'message' => 'Module activated successfully'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage()
+            ], 400);
         }
-
-        // Create new user module
-        $userModule = Auth::user()->userModules()->create([
-            'module_id' => $request->module_id,
-            'is_active' => true,
-            'activated_at' => now()
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data' => $userModule->load('module'),
-            'message' => 'Module activated successfully'
-        ], 201);
     }
 
     /**
@@ -93,31 +98,21 @@ class UserModuleController extends Controller
      */
     public function deactivate(Module $module)
     {
-        $userModule = Auth::user()->userModules()
-            ->where('module_id', $module->id)
-            ->first();
+        try {
+            $userModule = $this->moduleService->deactivateModule(Auth::id(), $module->id);
 
-        if (!$userModule) {
+            return response()->json([
+                'success' => true,
+                'data' => $userModule,
+                'message' => 'Module deactivated successfully'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Module not found for user'
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage()
             ], 404);
         }
-
-        if (!$userModule->is_active) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Module is already deactivated'
-            ], 400);
-        }
-
-        $userModule->deactivate();
-
-        return response()->json([
-            'success' => true,
-            'data' => $userModule->load('module'),
-            'message' => 'Module deactivated successfully'
-        ]);
     }
 
     /**
@@ -129,23 +124,56 @@ class UserModuleController extends Controller
             'configuration' => 'required|array'
         ]);
 
-        $userModule = Auth::user()->userModules()
-            ->where('module_id', $module->id)
-            ->first();
+        try {
+            $userModule = $this->moduleService->updateModuleConfiguration(
+                Auth::id(),
+                $module->id,
+                $request->configuration
+            );
 
-        if (!$userModule) {
+            return response()->json([
+                'success' => true,
+                'data' => $userModule,
+                'message' => 'Module configuration updated successfully'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Module not found for user'
+                'message' => $e->getMessage(),
+                'error' => $e->getMessage()
             ], 404);
         }
+    }
 
-        $userModule->updateConfiguration($request->configuration);
-
-        return response()->json([
-            'success' => true,
-            'data' => $userModule->load('module'),
-            'message' => 'Module configuration updated successfully'
+    /**
+     * Bulk activate modules
+     */
+    public function bulkActivate(Request $request)
+    {
+        $request->validate([
+            'module_ids' => 'required|array|min:1',
+            'module_ids.*' => 'exists:modules,id',
+            'configurations' => 'sometimes|array'
         ]);
+
+        try {
+            $results = $this->moduleService->bulkActivateModules(
+                Auth::id(),
+                $request->module_ids,
+                $request->input('configurations', [])
+            );
+
+            return response()->json([
+                'success' => true,
+                'data' => $results,
+                'message' => 'Bulk activation completed'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to bulk activate modules',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
