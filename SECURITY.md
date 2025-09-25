@@ -21,7 +21,7 @@ Kami sangat menghargai laporan security vulnerability yang bertanggung jawab. Ji
    - Deskripsi vulnerability
    - Langkah-langkah untuk reproduce
    - Dampak potensial
-   - Versi yang terpengaruh
+   - Versi yang terpengaruh 
    - Informasi kontak Anda
 
 ### ⏰ Timeline Response

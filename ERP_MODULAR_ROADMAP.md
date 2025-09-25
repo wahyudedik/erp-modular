@@ -26,7 +26,7 @@ Sistem ERP yang modular dan scalable untuk berbagai jenis usaha dengan:
 - **Core Modules:** Akuntansi, Inventori, Penjualan, Pembelian, HR
 - **Retail:** Point of Sale, Customer Management, Promotions
 - **Specialized:** Multi-location, Supplier Management, Analytics
-
+ 
 ### 🏢 Konstruksi
 **Modul Rekomendasi:**
 - **Core Modules:** Akuntansi, Inventori, Penjualan, Pembelian, HR

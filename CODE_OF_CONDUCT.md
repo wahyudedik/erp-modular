@@ -82,7 +82,7 @@ Kami berkomitmen untuk menghasilkan kode dan dokumentasi berkualitas tinggi.
 - **Hindari jargon yang tidak perlu**
 - **Ajukan pertanyaan jika ada yang tidak jelas**
 
-## 🎉 Pengakuan
+## 🎉 Pengakuan 
 
 Kami mengakui dan menghargai kontribusi semua anggota komunitas. Setiap kontribusi, besar atau kecil, dihargai dan diakui.
 

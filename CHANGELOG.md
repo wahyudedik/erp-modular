@@ -18,7 +18,7 @@ dan project ini mengikuti [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - Enhanced README dengan badges dan better formatting
 - Improved project structure documentation
 
-## [0.1.0] - 2025-01-25
+## [0.1.0] - 2025-01-25 
 
 ### Added
 - 🏗️ **Core Laravel 10 Backend**

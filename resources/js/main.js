@@ -10,6 +10,8 @@ import App from './App.vue'
 import Dashboard from './views/Dashboard.vue'
 import BusinessTypeSelection from './views/BusinessTypeSelection.vue'
 import ModuleManagement from './views/ModuleManagement.vue'
+import UserManagement from './views/UserManagement.vue'
+import Settings from './views/Settings.vue'
 
 // Vuetify configuration
 const vuetify = createVuetify({
@@ -50,6 +52,8 @@ const routes = [
   { path: '/', name: 'Dashboard', component: Dashboard },
   { path: '/business-type', name: 'BusinessTypeSelection', component: BusinessTypeSelection },
   { path: '/modules', name: 'ModuleManagement', component: ModuleManagement },
+  { path: '/users', name: 'UserManagement', component: UserManagement },
+  { path: '/settings', name: 'Settings', component: Settings },
 ]
 
 const router = createRouter({

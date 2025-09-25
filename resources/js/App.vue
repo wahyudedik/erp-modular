@@ -204,15 +204,18 @@
 
       <v-spacer />
 
-      <!-- Quick Actions -->
-      <v-btn icon variant="text" class="mr-2">
-        <v-icon>mdi-bell-outline</v-icon>
-        <v-badge color="error" content="3" floating />
-      </v-btn>
+             <!-- Quick Actions -->
+             <v-btn icon variant="text" class="mr-2">
+               <v-icon>mdi-bell-outline</v-icon>
+               <v-badge color="error" content="3" floating />
+             </v-btn>
 
-      <v-btn icon variant="text">
-        <v-icon>mdi-account-circle-outline</v-icon>
-      </v-btn>
+             <!-- Theme Toggle -->
+             <ThemeToggle class="mr-2" />
+
+             <v-btn icon variant="text">
+               <v-icon>mdi-account-circle-outline</v-icon>
+             </v-btn>
     </v-app-bar>
 
     <!-- Main Content Area -->
@@ -240,6 +243,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from './stores/user'
 import { useModuleStore } from './stores/modules'
+import { ThemeToggle } from './components/UI'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -386,31 +390,65 @@ onMounted(async () => {
   color: #666;
 }
 
-/* Responsive Design */
-@media (max-width: 960px) {
-  .left-sidebar {
-    width: 260px !important;
-  }
-  
-  .right-sidebar {
-    width: 70px !important;
-  }
-}
+       /* Responsive Design */
+       @media (max-width: 1264px) {
+         .left-sidebar {
+           width: 260px !important;
+         }
+         
+         .right-sidebar {
+           width: 70px !important;
+         }
+       }
 
-@media (max-width: 600px) {
-  .left-sidebar {
-    width: 240px !important;
-  }
-  
-  .right-sidebar {
-    width: 60px !important;
-  }
-  
-  .module-icon-btn {
-    width: 40px;
-    height: 40px;
-  }
-}
+       @media (max-width: 960px) {
+         .left-sidebar {
+           width: 240px !important;
+         }
+         
+         .right-sidebar {
+           width: 60px !important;
+         }
+         
+         .module-icon-btn {
+           width: 44px;
+           height: 44px;
+         }
+       }
+
+       @media (max-width: 600px) {
+         .left-sidebar {
+           width: 220px !important;
+         }
+         
+         .right-sidebar {
+           width: 50px !important;
+         }
+         
+         .module-icon-btn {
+           width: 40px;
+           height: 40px;
+         }
+         
+         .app-bar .v-toolbar-title {
+           font-size: 1rem;
+         }
+       }
+
+       @media (max-width: 400px) {
+         .left-sidebar {
+           width: 200px !important;
+         }
+         
+         .right-sidebar {
+           width: 45px !important;
+         }
+         
+         .module-icon-btn {
+           width: 36px;
+           height: 36px;
+         }
+       }
 
 /* Animation Classes */
 .v-list-item {

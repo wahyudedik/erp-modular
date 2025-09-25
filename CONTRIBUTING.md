@@ -18,7 +18,7 @@ Terima kasih atas minat Anda untuk berkontribusi pada ERP Modular! Kami sangat m
 Project ini dan semua partisipan di dalamnya diatur oleh [Code of Conduct](CODE_OF_CONDUCT.md). Dengan berpartisipasi, Anda diharapkan untuk mematuhi kode etik ini.
 
 ## 🚀 Getting Started
-
+ 
 ### Prerequisites
 
 - **PHP 8.2+** dengan extensions: mbstring, dom, fileinfo, mysql, redis

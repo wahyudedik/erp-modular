@@ -14,7 +14,6 @@ RUN apk add --no-cache \
     git \
     curl \
     libpng-dev \
-    libonig-dev \
     libxml2-dev \
     zip \
     unzip \
@@ -23,7 +22,11 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     libzip-dev \
     icu-dev \
-    postgresql-dev
+    postgresql-dev \
+    autoconf \
+    gcc \
+    g++ \
+    make
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -59,10 +62,10 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 COPY . .
 
 # Copy built frontend assets
-COPY --from=frontend-builder /app/dist ./public/dist
+COPY --from=frontend-builder /app/public/dist ./public/dist
 
-# Run composer scripts
-RUN composer run-script post-install-cmd
+# Run composer scripts (if any exist)
+RUN composer run-script post-install-cmd || true
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \

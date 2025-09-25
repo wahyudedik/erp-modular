@@ -98,6 +98,129 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  // User Management
+  const fetchUsers = async (params = {}) => {
+    loading.value = true
+    try {
+      const response = await api.get('/users', { params })
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchUser = async (userId) => {
+    loading.value = true
+    try {
+      const response = await api.get(`/users/${userId}`)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateUser = async (userId, userData) => {
+    loading.value = true
+    try {
+      const response = await api.put(`/users/${userId}`, userData)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateProfile = async (profileData) => {
+    loading.value = true
+    try {
+      const response = await api.put('/profile', profileData)
+      user.value = response.data.data
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const activateUser = async (userId) => {
+    loading.value = true
+    try {
+      const response = await api.post(`/users/${userId}/activate`)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deactivateUser = async (userId) => {
+    loading.value = true
+    try {
+      const response = await api.post(`/users/${userId}/deactivate`)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // User Invitations
+  const fetchInvitations = async (params = {}) => {
+    loading.value = true
+    try {
+      const response = await api.get('/invitations', { params })
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const sendInvitation = async (invitationData) => {
+    loading.value = true
+    try {
+      const response = await api.post('/invitations', invitationData)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const resendInvitation = async (invitationId) => {
+    loading.value = true
+    try {
+      const response = await api.post(`/invitations/${invitationId}/resend`)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const cancelInvitation = async (invitationId) => {
+    loading.value = true
+    try {
+      const response = await api.post(`/invitations/${invitationId}/cancel`)
+      return response.data
+    } catch (error) {
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
   const logout = () => {
     user.value = null
     businessType.value = null
@@ -110,12 +233,12 @@ export const useUserStore = defineStore('user', () => {
     businessType,
     activeModules,
     loading,
-    
+
     // Getters
     isAuthenticated,
     hasBusinessType,
     moduleCount,
-    
+
     // Actions
     login,
     register,
@@ -123,6 +246,21 @@ export const useUserStore = defineStore('user', () => {
     loadActiveModules,
     activateModule,
     deactivateModule,
+
+    // User Management
+    fetchUsers,
+    fetchUser,
+    updateUser,
+    updateProfile,
+    activateUser,
+    deactivateUser,
+
+    // User Invitations
+    fetchInvitations,
+    sendInvitation,
+    resendInvitation,
+    cancelInvitation,
+
     logout
   }
 })

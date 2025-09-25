@@ -139,7 +139,7 @@ docker-compose exec app php artisan db:seed
 
 # Access application
 # Frontend: http://localhost:3000
-# Backend API: http://localhost:8001
+# Backend API: http://localhost:8001 
 ```
 
 ### Production Setup

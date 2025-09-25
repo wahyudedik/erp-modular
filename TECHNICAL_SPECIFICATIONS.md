@@ -26,7 +26,7 @@
 │                  Application Layer                          │
 │  ┌─────────────┬─────────────┬─────────────┬─────────────┐  │
 │  │   Core      │  Business   │   Module    │  Industry   │  │
-│  │  Services   │   Logic     │  Manager    │  Specific   │  │
+│  │  Services   │   Logic     │  Manager    │  Specific   │  │ 
 │  └─────────────┴─────────────┴─────────────┴─────────────┘  │
 └─────────────────────────────────────────────────────────────┘
                               │
