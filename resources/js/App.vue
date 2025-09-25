@@ -1,72 +1,118 @@
 <template>
   <v-app>
+    <!-- Left Sidebar - Main Navigation -->
     <v-navigation-drawer
-      v-model="drawer"
-      :rail="rail"
+      v-model="leftDrawer"
+      :rail="leftRail"
       permanent
-      @click="rail = false"
+      class="left-sidebar"
+      width="280"
+      @click="leftRail = false"
     >
-      <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-        :title="user?.name || 'ERP User'"
-        subtitle="Multi-Industri ERP"
-        nav
-      >
+      <!-- User Profile Section -->
+      <v-list-item class="user-profile">
+        <template v-slot:prepend>
+          <v-avatar color="primary" size="40">
+            <v-img
+              src="https://randomuser.me/api/portraits/men/85.jpg"
+              alt="User Avatar"
+            />
+          </v-avatar>
+        </template>
+        
+        <v-list-item-title class="text-h6 font-weight-bold">
+          {{ user?.name || 'ERP User' }}
+        </v-list-item-title>
+        
+        <v-list-item-subtitle class="text-caption">
+          Multi-Industri ERP
+        </v-list-item-subtitle>
+
         <template v-slot:append>
           <v-btn
             variant="text"
             icon="mdi-chevron-left"
-            @click.stop="rail = !rail"
-          ></v-btn>
+            size="small"
+            @click.stop="leftRail = !leftRail"
+          />
         </template>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider class="my-2" />
 
-      <v-list density="compact" nav>
+      <!-- Main Navigation Menu -->
+      <v-list density="compact" nav class="main-nav">
         <v-list-item
           prepend-icon="mdi-view-dashboard"
           title="Dashboard"
           value="dashboard"
           :to="{ name: 'Dashboard' }"
-        ></v-list-item>
+          :active="isActiveRoute('Dashboard')"
+        />
 
         <v-list-item
           prepend-icon="mdi-domain"
           title="Business Type"
           value="business-type"
           :to="{ name: 'BusinessTypeSelection' }"
-        ></v-list-item>
+          :active="isActiveRoute('BusinessTypeSelection')"
+        />
 
         <v-list-item
           prepend-icon="mdi-puzzle"
-          title="Modules"
+          title="Module Manager"
           value="modules"
           :to="{ name: 'ModuleManagement' }"
-        ></v-list-item>
+          :active="isActiveRoute('ModuleManagement')"
+        />
+
+        <v-divider class="my-3" />
+
+        <!-- Active Module Menu Items (Dynamic) -->
+        <v-list-subheader class="text-uppercase text-caption font-weight-bold">
+          Active Modules
+        </v-list-subheader>
+        
+        <v-list-item
+          v-for="userModule in activeModuleMenus"
+          :key="userModule.id"
+          :prepend-icon="getModuleIcon(userModule.module.name)"
+          :title="userModule.module.name"
+          :value="`module-${userModule.module.id}`"
+          @click="setActiveModule(userModule)"
+          :active="activeModule?.id === userModule.module.id"
+          class="module-menu-item"
+        />
+
+        <v-divider class="my-3" />
 
         <v-list-item
           prepend-icon="mdi-account-group"
           title="Users"
           value="users"
           :to="{ name: 'UserManagement' }"
-        ></v-list-item>
+          :active="isActiveRoute('UserManagement')"
+        />
 
         <v-list-item
           prepend-icon="mdi-cog"
           title="Settings"
           value="settings"
           :to="{ name: 'Settings' }"
-        ></v-list-item>
+          :active="isActiveRoute('Settings')"
+        />
       </v-list>
 
+      <!-- Footer Actions -->
       <template v-slot:append>
-        <div class="pa-2">
+        <div class="pa-3">
           <v-btn
             block
             color="primary"
             variant="outlined"
             prepend-icon="mdi-logout"
+            size="small"
+            @click="logout"
           >
             Logout
           </v-btn>
@@ -74,60 +120,322 @@
       </template>
     </v-navigation-drawer>
 
-    <v-app-bar
-      :elevation="2"
+    <!-- Right Sidebar - Module Icons -->
+    <v-navigation-drawer
+      v-model="rightDrawer"
+      location="right"
+      permanent
+      class="right-sidebar"
+      width="80"
     >
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <div class="module-icons-container">
+        <div class="text-center pa-2">
+          <v-icon color="primary" size="24">mdi-puzzle</v-icon>
+          <div class="text-caption text-center mt-1">Modules</div>
+        </div>
+        
+        <v-divider class="my-2" />
+        
+        <!-- Module Icons Grid -->
+        <div class="module-icons-grid">
+          <v-btn
+            v-for="userModule in userStore.activeModules"
+            :key="userModule.id"
+            :icon="getModuleIcon(userModule.module.name)"
+            :color="activeModule?.id === userModule.module.id ? 'primary' : 'grey'"
+            :variant="activeModule?.id === userModule.module.id ? 'flat' : 'text'"
+            size="large"
+            class="module-icon-btn"
+            @click="setActiveModule(userModule)"
+          >
+            <v-icon size="24">{{ getModuleIcon(userModule.module.name) }}</v-icon>
+            
+            <!-- Tooltip -->
+            <v-tooltip activator="parent" location="left">
+              {{ userModule.module.name }}
+            </v-tooltip>
+          </v-btn>
+        </div>
+        
+        <!-- Add Module Button -->
+        <v-divider class="my-3" />
+        <div class="text-center">
+          <v-btn
+            icon="mdi-plus"
+            color="success"
+            variant="outlined"
+            size="small"
+            :to="{ name: 'ModuleManagement' }"
+          >
+            <v-icon size="20">mdi-plus</v-icon>
+            <v-tooltip activator="parent" location="left">
+              Add More Modules
+            </v-tooltip>
+          </v-btn>
+        </div>
+      </div>
+    </v-navigation-drawer>
+
+    <!-- Top App Bar -->
+    <v-app-bar
+      :elevation="1"
+      color="white"
+      class="app-bar"
+    >
+      <v-app-bar-nav-icon @click="leftDrawer = !leftDrawer" />
       
-      <v-toolbar-title>
+      <v-toolbar-title class="d-flex align-center">
+        <v-icon color="primary" class="mr-2">mdi-factory</v-icon>
         <span class="font-weight-bold text-primary">ERP</span>
-        <span class="text-grey">Modular</span>
+        <span class="text-grey ml-1">Modular</span>
+        
+        <!-- Active Module Indicator -->
+        <v-chip
+          v-if="activeModule"
+          size="small"
+          color="primary"
+          variant="outlined"
+          class="ml-3"
+        >
+          <v-icon start size="16">{{ getModuleIcon(activeModule.name) }}</v-icon>
+          {{ activeModule.name }}
+        </v-chip>
       </v-toolbar-title>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
+      <!-- Quick Actions -->
+      <v-btn icon variant="text" class="mr-2">
+        <v-icon>mdi-bell-outline</v-icon>
+        <v-badge color="error" content="3" floating />
       </v-btn>
 
-      <v-btn icon>
-        <v-icon>mdi-account</v-icon>
+      <v-btn icon variant="text">
+        <v-icon>mdi-account-circle-outline</v-icon>
       </v-btn>
     </v-app-bar>
 
-    <v-main>
-      <v-container fluid>
+    <!-- Main Content Area -->
+    <v-main class="main-content">
+      <v-container fluid class="pa-0">
         <router-view />
       </v-container>
     </v-main>
 
-    <v-footer app>
-      <span>&copy; {{ new Date().getFullYear() }} ERP Modular - Multi-Industri Solution</span>
+    <!-- Footer -->
+    <v-footer app class="app-footer">
+      <span class="text-caption">
+        &copy; {{ new Date().getFullYear() }} ERP Modular - Multi-Industri Solution
+      </span>
+      <v-spacer />
+      <span class="text-caption">
+        Active Modules: {{ userStore.activeModules.length }}
+      </span>
     </v-footer>
   </v-app>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useUserStore } from './stores/user'
+import { useModuleStore } from './stores/modules'
 
-const drawer = ref(true)
-const rail = ref(true)
-
+const route = useRoute()
 const userStore = useUserStore()
+const moduleStore = useModuleStore()
+
+// Sidebar states
+const leftDrawer = ref(true)
+const leftRail = ref(false)
+const rightDrawer = ref(true)
+
+// Active module state
+const activeModule = ref(null)
+
+// Computed properties
 const user = computed(() => userStore.user)
+const activeModuleMenus = computed(() => userStore.activeModules)
+
+// Methods
+const isActiveRoute = (routeName) => {
+  return route.name === routeName
+}
+
+const setActiveModule = (userModule) => {
+  activeModule.value = userModule.module
+  // You can add logic here to navigate to module-specific routes
+  // For now, we'll just set the active module
+}
+
+const getModuleIcon = (moduleName) => {
+  return moduleStore.getModuleIcon(moduleName)
+}
+
+const logout = () => {
+  userStore.logout()
+  // Navigate to login page
+}
+
+// Load active modules on mount
+onMounted(async () => {
+  if (userStore.isAuthenticated) {
+    await userStore.loadActiveModules()
+  }
+})
 </script>
 
 <style scoped>
-.v-navigation-drawer {
+/* Left Sidebar Styling */
+.left-sidebar {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.v-list-item--active {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+.left-sidebar .v-list-item--active {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px;
+  margin: 2px 8px;
 }
 
-.v-toolbar-title {
-  font-size: 1.5rem;
+.left-sidebar .v-list-item {
+  border-radius: 8px;
+  margin: 2px 8px;
+  transition: all 0.2s ease;
+}
+
+.left-sidebar .v-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-profile {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.main-nav .v-list-subheader {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+}
+
+.module-menu-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid transparent;
+}
+
+.module-menu-item.v-list-item--active {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left-color: #4CAF50;
+}
+
+/* Right Sidebar Styling */
+.right-sidebar {
+  background: #f8f9fa;
+  border-left: 1px solid #e0e0e0;
+}
+
+.module-icons-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 4px;
+}
+
+.module-icons-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.module-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.module-icon-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* App Bar Styling */
+.app-bar {
+  border-bottom: 1px solid #e0e0e0;
+  backdrop-filter: blur(10px);
+}
+
+.app-bar .v-toolbar-title {
+  font-size: 1.25rem;
+}
+
+/* Main Content Styling */
+.main-content {
+  background: #fafafa;
+  min-height: calc(100vh - 64px - 36px);
+}
+
+/* Footer Styling */
+.app-footer {
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .left-sidebar {
+    width: 260px !important;
+  }
+  
+  .right-sidebar {
+    width: 70px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .left-sidebar {
+    width: 240px !important;
+  }
+  
+  .right-sidebar {
+    width: 60px !important;
+  }
+  
+  .module-icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Animation Classes */
+.v-list-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.v-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom Scrollbar */
+.left-sidebar ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.left-sidebar ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.left-sidebar ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.left-sidebar ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 </style>
