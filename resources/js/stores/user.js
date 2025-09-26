@@ -15,11 +15,17 @@ export const useUserStore = defineStore('user', () => {
   const moduleCount = computed(() => activeModules.value.length)
 
   // Actions
-  const login = async (credentials) => {
+  const login = async (email, password) => {
     loading.value = true
     try {
-      const response = await api.post('/auth/login', credentials)
-      user.value = response.data.user
+      const response = await api.post('/auth/login', { email, password })
+      user.value = response.data.data.user
+
+      // Store token
+      if (response.data.data.token) {
+        localStorage.setItem('auth_token', response.data.data.token)
+      }
+
       return response.data
     } catch (error) {
       throw error
@@ -32,8 +38,13 @@ export const useUserStore = defineStore('user', () => {
     loading.value = true
     try {
       const response = await api.post('/auth/register', userData)
-      user.value = response.data.user
-      businessType.value = response.data.businessType
+      user.value = response.data.data.user
+
+      // Store token
+      if (response.data.data.token) {
+        localStorage.setItem('auth_token', response.data.data.token)
+      }
+
       return response.data
     } catch (error) {
       throw error
@@ -225,6 +236,7 @@ export const useUserStore = defineStore('user', () => {
     user.value = null
     businessType.value = null
     activeModules.value = []
+    localStorage.removeItem('auth_token')
   }
 
   return {

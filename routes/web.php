@@ -2,12 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Serve the Vue.js SPA for all routes except API
+// Serve Vue.js SPA for all non-API routes
 Route::get('/{any}', function () {
     return view('app');
-})->where('any', '.*');
-
-// Fallback route for the root
-Route::get('/', function () {
-    return view('app');
-});
+})->where('any', '^(?!api).*$');

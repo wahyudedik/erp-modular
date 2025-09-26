@@ -7,6 +7,9 @@ import '@mdi/font/css/materialdesignicons.css'
 
 // Import components
 import App from './App.vue'
+import LandingPage from './views/LandingPage.vue'
+import Login from './views/Login.vue'
+import Register from './views/Register.vue'
 import Dashboard from './views/Dashboard.vue'
 import BusinessTypeSelection from './views/BusinessTypeSelection.vue'
 import ModuleManagement from './views/ModuleManagement.vue'
@@ -49,7 +52,10 @@ const vuetify = createVuetify({
 
 // Router configuration
 const routes = [
-  { path: '/', name: 'Dashboard', component: Dashboard },
+  { path: '/', name: 'LandingPage', component: LandingPage },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/register', name: 'Register', component: Register },
+  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/business-type', name: 'BusinessTypeSelection', component: BusinessTypeSelection },
   { path: '/modules', name: 'ModuleManagement', component: ModuleManagement },
   { path: '/users', name: 'UserManagement', component: UserManagement },

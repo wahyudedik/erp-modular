@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActivityLog extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         'user_id',
-        'action',
-        'description',
+        'event_type',
         'model_type',
         'model_id',
+        'description',
         'properties',
         'ip_address',
         'user_agent',
+        'country',
+        'city',
     ];
 
     protected $casts = [
@@ -42,11 +45,11 @@ class ActivityLog extends Model
     }
 
     /**
-     * Scope for filtering by action.
+     * Scope for filtering by event type.
      */
-    public function scopeByAction($query, $action)
+    public function scopeByEventType($query, $eventType)
     {
-        return $query->where('action', $action);
+        return $query->where('event_type', $eventType);
     }
 
     /**
@@ -72,7 +75,7 @@ class ActivityLog extends Model
     {
         $userName = $this->user ? $this->user->name : 'System';
 
-        return match ($this->action) {
+        return match ($this->event_type) {
             'login' => "{$userName} logged in",
             'logout' => "{$userName} logged out",
             'created' => "{$userName} created {$this->model_type}",

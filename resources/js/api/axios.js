@@ -18,13 +18,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
-    // Add CSRF token for Laravel
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')
-    if (csrfToken) {
-      config.headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content')
-    }
-    
     return config
   },
   (error) => {
@@ -40,17 +33,17 @@ api.interceptors.response.use(
   (error) => {
     // Handle common errors
     if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
+      // Unauthorized - clear token and redirect to login
       localStorage.removeItem('auth_token')
       window.location.href = '/login'
-    } else if (error.response?.status === 422) {
-      // Validation errors
-      console.error('Validation Error:', error.response.data.errors)
-    } else if (error.response?.status >= 500) {
-      // Server errors
-      console.error('Server Error:', error.response.data.message)
+    } else if (error.response?.status === 403) {
+      // Forbidden - show error message
+      console.error('Access forbidden')
+    } else if (error.response?.status === 500) {
+      // Server error
+      console.error('Server error')
     }
-    
+
     return Promise.reject(error)
   }
 )

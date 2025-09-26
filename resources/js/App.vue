@@ -1,14 +1,16 @@
 <template>
   <v-app>
-    <!-- Left Sidebar - Main Navigation -->
-    <v-navigation-drawer
-      v-model="leftDrawer"
-      :rail="leftRail"
-      permanent
-      class="left-sidebar"
-      width="280"
-      @click="leftRail = false"
-    >
+    <!-- Authenticated Layout -->
+    <template v-if="userStore.isAuthenticated">
+      <!-- Left Sidebar - Main Navigation -->
+      <v-navigation-drawer
+        v-model="leftDrawer"
+        :rail="leftRail"
+        permanent
+        class="left-sidebar"
+        width="280"
+        @click="leftRail = false"
+      >
       <!-- User Profile Section -->
       <v-list-item class="user-profile">
         <template v-slot:prepend>
@@ -182,7 +184,8 @@
       color="white"
       class="app-bar"
     >
-      <v-app-bar-nav-icon @click="leftDrawer = !leftDrawer" />
+      <v-app-bar-nav-icon @click="toggleMobileNav" class="d-md-none" />
+      <v-app-bar-nav-icon @click="leftDrawer = !leftDrawer" class="d-none d-md-block" />
       
       <v-toolbar-title class="d-flex align-center">
         <v-icon color="primary" class="mr-2">mdi-factory</v-icon>
@@ -225,27 +228,34 @@
       </v-container>
     </v-main>
 
-    <!-- Footer -->
-    <v-footer app class="app-footer">
-      <span class="text-caption">
-        &copy; {{ new Date().getFullYear() }} ERP Modular - Multi-Industri Solution
-      </span>
-      <v-spacer />
-      <span class="text-caption">
-        Active Modules: {{ userStore.activeModules.length }}
-      </span>
-    </v-footer>
+      <!-- Footer -->
+      <v-footer app class="app-footer">
+        <span class="text-caption">
+          &copy; {{ new Date().getFullYear() }} ERP Modular - Multi-Industri Solution
+        </span>
+        <v-spacer />
+        <span class="text-caption">
+          Active Modules: {{ userStore.activeModules.length }}
+        </span>
+      </v-footer>
+    </template>
+
+    <!-- Non-authenticated Layout -->
+    <template v-else>
+      <router-view />
+    </template>
   </v-app>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from './stores/user'
 import { useModuleStore } from './stores/modules'
 import { ThemeToggle } from './components/UI'
 
 const route = useRoute()
+const router = useRouter()
 const userStore = useUserStore()
 const moduleStore = useModuleStore()
 
@@ -278,14 +288,51 @@ const getModuleIcon = (moduleName) => {
 
 const logout = () => {
   userStore.logout()
-  // Navigate to login page
+  router.push({ name: 'Login' })
+}
+
+// Mobile navigation
+const mobileNavOpen = ref(false)
+
+const toggleMobileNav = () => {
+  mobileNavOpen.value = !mobileNavOpen.value
+}
+
+// Close mobile nav when route changes
+watch(() => route.path, () => {
+  if (mobileNavOpen.value) {
+    mobileNavOpen.value = false
+  }
+})
+
+// Authentication check and redirect
+const checkAuth = () => {
+  const token = localStorage.getItem('auth_token')
+  if (token && !userStore.isAuthenticated) {
+    // Try to load user data from token
+    // This would typically involve an API call to get user info
+  }
+  
+  // Redirect logic
+  const publicRoutes = ['LandingPage', 'Login', 'Register']
+  if (!userStore.isAuthenticated && !publicRoutes.includes(route.name)) {
+    router.push({ name: 'LandingPage' })
+  } else if (userStore.isAuthenticated && publicRoutes.includes(route.name)) {
+    router.push({ name: 'Dashboard' })
+  }
 }
 
 // Load active modules on mount
 onMounted(async () => {
+  checkAuth()
   if (userStore.isAuthenticated) {
     await userStore.loadActiveModules()
   }
+})
+
+// Watch for route changes
+watch(() => route.name, () => {
+  checkAuth()
 })
 </script>
 
@@ -416,13 +463,21 @@ onMounted(async () => {
          }
        }
 
-       @media (max-width: 600px) {
+       @media (max-width: 768px) {
          .left-sidebar {
-           width: 220px !important;
+           width: 100% !important;
+           position: fixed !important;
+           z-index: 1000;
+           transform: translateX(-100%);
+           transition: transform 0.3s ease;
+         }
+         
+         .left-sidebar.v-navigation-drawer--active {
+           transform: translateX(0);
          }
          
          .right-sidebar {
-           width: 50px !important;
+           display: none !important;
          }
          
          .module-icon-btn {
@@ -433,20 +488,44 @@ onMounted(async () => {
          .app-bar .v-toolbar-title {
            font-size: 1rem;
          }
+         
+         .main-content {
+           margin-left: 0 !important;
+           margin-right: 0 !important;
+         }
        }
 
-       @media (max-width: 400px) {
+       @media (max-width: 600px) {
          .left-sidebar {
-           width: 200px !important;
-         }
-         
-         .right-sidebar {
-           width: 45px !important;
+           width: 100% !important;
          }
          
          .module-icon-btn {
            width: 36px;
            height: 36px;
+         }
+         
+         .app-bar .v-toolbar-title {
+           font-size: 0.9rem;
+         }
+         
+         .user-profile {
+           padding: 12px;
+         }
+         
+         .main-nav .v-list-item {
+           margin: 1px 4px;
+         }
+       }
+
+       @media (max-width: 400px) {
+         .module-icon-btn {
+           width: 32px;
+           height: 32px;
+         }
+         
+         .app-bar .v-toolbar-title {
+           font-size: 0.8rem;
          }
        }
 
